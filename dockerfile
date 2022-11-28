@@ -6,7 +6,6 @@ RUN pip install -r requirements.txt
 COPY . /app
 ENV PORT 5000
 EXPOSE 5000
-ENTRYPOINT [ "python" ]
-CMD [ "app.py" ]
+ENTRYPOINT FLASK_APP= /app.py flask run --host=0.0.0.0
 
 
