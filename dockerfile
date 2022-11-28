@@ -7,5 +7,5 @@ COPY . /app
 ENV PORT 5000
 EXPOSE 5000
 ENTRYPOINT [ "python" ]
-CMD [ "-m" , "main.py", "run", "--host=0.0.0.0"]
+CMD [ "-m" , "app.py", "run", "--host=0.0.0.0"]
 
