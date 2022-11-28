@@ -1,9 +1,9 @@
 name: Docker Image CI
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "!master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "!master" ]
 
 jobs:     
       
@@ -26,6 +26,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: milankoelen/json:latest
+          tags: milankoelen/json:test
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
