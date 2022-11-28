@@ -5,4 +5,7 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 COPY . /app
 ENTRYPOINT [ "python" ]
+
+ENV PORT 8080
+EXPOSE 8080
 CMD [ "main.py" ]
