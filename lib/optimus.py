@@ -1,13 +1,20 @@
-def flatten_json(y):
+def flatten_json(y, depth=0):
     # src */
     # https://www.geeksforgeeks.org/flattening-json-objects-in-python/ */
 
-    prime = {}
+    out = {}
 
-    def flatten(x, name=""):
+    def flatten(
+        x,
+        depth,
+        name="",
+    ):
         # If the Nested key-value
         # pair is of dict type
         if type(x) is dict:
+            depth += 1
+            print("depth: ", depth)
+
             for a in x:
                 flatten(x[a], name + a + ".")
         # If the Nested key-value
@@ -18,7 +25,7 @@ def flatten_json(y):
                 flatten(a, name + ".")
                 i += 1
         else:
-            prime[name[:-1]] = x
+            out[name[:-1]] = x
 
-    flatten(y)
-    return prime
+    flatten(y, depth)
+    return {"out": out, "depth": depth}

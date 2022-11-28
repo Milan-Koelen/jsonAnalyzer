@@ -26,7 +26,7 @@ def flatten():
     print("Flatten request received")
     data = request.get_json()
     # flatten json
-    flat_data = optimus.flatten_json(data)
+    flat_data = optimus.flatten_json(data)["out"]
     return jsonify(flat_data)
 
 
@@ -36,11 +36,22 @@ def fields():
     print("Fields request received")
     data = request.get_json()
     # flatten json
-    flat_data = optimus.flatten_json(data)
+    flat_data = optimus.flatten_json(data)["out"]
     # get all fields witout duplicates
     fields = list(set(flat_data.keys()))
-
     return jsonify({"fields": fields})
+
+
+# endpoint to find depth of json
+@app.route("/depth", methods=["POST"])
+def depth():
+    print("Depth request received")
+    data = request.get_json()
+    # flatten json
+    depth = optimus.flatten_json(data)["depth"]
+    # get all fields witout duplicates
+    # get depth of json
+    return jsonify({"depth": depth})
 
 
 if __name__ == "__main__":
