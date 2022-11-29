@@ -61,7 +61,9 @@ def req():
     # convert json data to dict
     request_data = request.get_json()
     # make request
-    response = req_factory.makeRequest(request_data["url"], request_data["data"], request_data["method"])
+    response = req_factory.makeRequest(
+        request_data["url"], request_data["data"], request_data["method"]
+    )
     print(response)
     # get all fields witout duplicates
     flat_data = optimus.flatten_json(response)["out"]
@@ -71,7 +73,8 @@ def req():
     for field in fields:
         print(field)
     print("===")
-    return jsonify({"request":request_data,"fields": fields, "response": response})
+    return jsonify({"request": request_data, "fields": fields, "response": response})
+
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000)
