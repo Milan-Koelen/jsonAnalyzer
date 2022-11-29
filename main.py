@@ -27,6 +27,11 @@ def flatten():
     data = request.get_json()
     # flatten json
     flat_data = optimus.flatten_json(data)["out"]
+    fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
     return jsonify(flat_data)
 
 
@@ -39,6 +44,10 @@ def fields():
     flat_data = optimus.flatten_json(data)["out"]
     # get all fields witout duplicates
     fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
     return jsonify({"fields": fields})
 
 
@@ -63,7 +72,6 @@ def req():
     response = req_factory.makeRequest(
         request_data["url"], request_data["data"], request_data["method"]
     )
-    print(response)
     # get all fields witout duplicates
     flat_data = optimus.flatten_json(response)["out"]
     # get all fields witout duplicates
@@ -71,7 +79,7 @@ def req():
     print("==")
     for field in fields:
         print(field)
-    print("===")
+    print("===---===---===---===---===---===---===\n")
     return jsonify({"request": request_data, "fields": fields, "response": response})
 
 

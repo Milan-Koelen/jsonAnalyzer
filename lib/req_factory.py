@@ -12,5 +12,4 @@ def makeRequest(url: str, data: dict, method: str):
     else:
         print("Invalid method")
         return
-    # print("Response: {}".format(response.json()))
     return response.json()
