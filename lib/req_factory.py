@@ -1,11 +1,9 @@
 import requests as request
 
-# CREATE REQUEST OBJECT
-
-
+# CREATE REQUEST OBJECT AND MAKE REQUEST
 
 def makeRequest(url:str, data:dict, method:str):
-    print("Making request to {} with data {}".format(url, data))
+    print(f"Making request to {url}")
     if method == "POST":
         response = request.post(url, json=data)
     elif method == "GET":
@@ -13,7 +11,8 @@ def makeRequest(url:str, data:dict, method:str):
     else:
         print("Invalid method")
         return
-    print("Response: {}".format(response.json()))
-    return "response.json"
+    # print("Response: {}".format(response.json()))
+    return response.json()
+
 
   

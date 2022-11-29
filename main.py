@@ -58,15 +58,20 @@ def depth():
 @app.route("/req", methods=["POST"])
 def req():
     print("Request request received")
-    
     # convert json data to dict
-    data = request.get_json()
-    print(data)
+    request_data = request.get_json()
     # make request
-    response = req_factory.makeRequest(data["url"], data["data"], data["method"])
-    return jsonify({"response": response,
-                    "dict": data})
-
+    response = req_factory.makeRequest(request_data["url"], request_data["data"], request_data["method"])
+    print(response)
+    # get all fields witout duplicates
+    flat_data = optimus.flatten_json(response)["out"]
+    # get all fields witout duplicates
+    fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===")
+    return jsonify({"request":request_data,"fields": fields, "response": response})
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000)
