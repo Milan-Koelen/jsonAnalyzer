@@ -11,7 +11,6 @@ def flatten_json(y):
         # If the Nested key-value
         # pair is of dict type
         if type(x) is dict:
-
             for a in x:
                 flatten(x[a], name + a + ".")
         # If the Nested key-value

@@ -50,7 +50,6 @@ def depth():
     # flatten json
     depth = optimus.flatten_json(data)["depth"]
     # get all fields witout duplicates
-    # get depth of json
     return jsonify({"depth": depth})
 
 
