@@ -45,13 +45,15 @@ def fields():
     # get all fields witout duplicates
     fields = list(set(flat_data.keys()))
     lists = []
+    arrays = optimus.flatten_json(data)["arrays"]
     
     print("==")
     print("fields")
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    return jsonify({"fields": fields})
+    return jsonify({"fields": fields,
+                    "arrays": arrays})
 
 
 # endpoint to find depth of json
