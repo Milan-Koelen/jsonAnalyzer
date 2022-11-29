@@ -1,4 +1,7 @@
 
 # VENV
 venv
+.env
 
+# CACHE
+lib/__pycache__
