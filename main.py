@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 
-from lib import optimus
+from lib import optimus, req_factory
 
 app = Flask(__name__)
 
@@ -52,6 +52,20 @@ def depth():
     # get all fields witout duplicates
     # get depth of json
     return jsonify({"depth": depth})
+
+
+# endpoint to make request
+@app.route("/req", methods=["POST"])
+def req():
+    print("Request request received")
+    
+    # convert json data to dict
+    data = request.get_json()
+    print(data)
+    # make request
+    response = req_factory.makeRequest(data["url"], data["data"], data["method"])
+    return jsonify({"response": response,
+                    "dict": data})
 
 
 if __name__ == "__main__":
