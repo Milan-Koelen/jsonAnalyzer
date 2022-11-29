@@ -45,3 +45,21 @@ def flatten_json(y):
     print("===---===---===---===---===---===---===\n")
     return {"out": out,
             "arrays": arrays}
+    
+    
+def mongoTransformation(y):
+
+    unwind = []
+    unwind.append("[")
+
+    for array in flatten_json(y)['arrays']:
+        unwind.append(f'{{"$unwind": {{"path": "${array}", "preserveNullAndEmptyArrays": "True"}}}},')
+        
+    unwind.append("]")
+    
+    for item in unwind:
+        print(item)
+
+
+    return {"unwind": unwind}
+
