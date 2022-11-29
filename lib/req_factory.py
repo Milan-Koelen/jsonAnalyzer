@@ -4,7 +4,7 @@ import requests as request
 
 
 def makeRequest(url: str, data: dict, method: str):
-    print(f"Making request to {url}")
+    print(f"Making {method} request to {url}")
     if method == "POST":
         response = request.post(url, json=data)
     elif method == "GET":
