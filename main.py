@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 
-from lib import optimus
+from lib import optimus, req_factory
 
 app = Flask(__name__)
 
@@ -27,6 +27,11 @@ def flatten():
     data = request.get_json()
     # flatten json
     flat_data = optimus.flatten_json(data)["out"]
+    fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
     return jsonify(flat_data)
 
 
@@ -39,6 +44,10 @@ def fields():
     flat_data = optimus.flatten_json(data)["out"]
     # get all fields witout duplicates
     fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
     return jsonify({"fields": fields})
 
 
@@ -50,8 +59,28 @@ def depth():
     # flatten json
     depth = optimus.flatten_json(data)["depth"]
     # get all fields witout duplicates
-    # get depth of json
     return jsonify({"depth": depth})
+
+
+# endpoint to make request
+@app.route("/req", methods=["POST"])
+def req():
+    print("Request request received")
+    # convert json data to dict
+    request_data = request.get_json()
+    # make request
+    response = req_factory.makeRequest(
+        request_data["url"], request_data["data"], request_data["method"]
+    )
+    # get all fields witout duplicates
+    flat_data = optimus.flatten_json(response)["out"]
+    # get all fields witout duplicates
+    fields = list(set(flat_data.keys()))
+    print("==")
+    for field in fields:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
+    return jsonify({"request": request_data, "fields": fields, "response": response})
 
 
 if __name__ == "__main__":
