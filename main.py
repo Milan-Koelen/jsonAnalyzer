@@ -89,5 +89,20 @@ def req():
     return jsonify({"request": request_data, "fields": fields, "arrays": arrays,  "response": response})
 
 
+# endpoint to undwind json
+@app.route("/unwind", methods=["POST"])
+def unwind():
+    request_data = request.get_json()
+    # print(request_data)
+    unwind=optimus.mongoTransformation(request_data)['unwind']
+    print("--UNDIND--")
+    for i in unwind:
+        print(i)
+    return jsonify({"unwind": unwind})
+
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
