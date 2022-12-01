@@ -50,16 +50,37 @@ def flatten_json(y):
 def mongoTransformation(y):
 
     unwind = []
-    unwind.append("[")
 
     for array in flatten_json(y)['arrays']:
         unwind.append(f'{{"$unwind": {{"path": "${array}", "preserveNullAndEmptyArrays": "True"}}}},')
         
-    unwind.append("]")
     
     for item in unwind:
         print(item)
 
 
+
     return {"unwind": unwind}
 
+
+def project(y):
+    project = []
+    project.append(f'{{"$project":')
+    
+    for key in y:
+
+        # Replace all dots with underscores
+        collumn = key.replace(".", "_")
+        
+        project.append(f'"{collumn}": {{ "$ifNull": [ "${key}", "" ] }},')
+    
+    
+    
+    # PROJECT ALL FIELDS WITH IFNULL AND COND FOR EPTY STATEMENTS
+    
+    
+    project.append(f'}}')
+    for item in project:
+        print(item)
+
+    return{"project": project}

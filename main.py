@@ -94,11 +94,17 @@ def req():
 def unwind():
     request_data = request.get_json()
     # print(request_data)
+    flat_data = optimus.flatten_json(request_data)   
+    
     unwind=optimus.mongoTransformation(request_data)['unwind']
     print("--UNDIND--")
-    for i in unwind:
+    for i in flat_data['arrays']:
         print(i)
-    return jsonify({"unwind": unwind})
+    
+    # PROJECTION
+    project=optimus.project(flat_data["out"])["project"]
+    return jsonify({"unwind": unwind,
+                   "project": project})
 
 
 
