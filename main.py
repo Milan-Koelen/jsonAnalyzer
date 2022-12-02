@@ -117,7 +117,7 @@ def transform():
     print("Transform request received")
     request_data = request.get_json()
     transformation = optimus.mongoTransformation(request_data)
-    
+
     return jsonify(transformation)
 
 

@@ -38,7 +38,7 @@ def flatten_json(y):
     for array in arrays:
         print(array)
     print("===---===---===---===---===---===---===\n")
-    
+
     print("===---===   NULL  VALUES  ---===---===")
     for field in nullValues:
         print(field)
@@ -50,9 +50,8 @@ def mongoTransformation(y):
 
     unwind = []
     project = []
-    
-    flat_json = flatten_json(y)
 
+    flat_json = flatten_json(y)
 
     # UNWIND STAGE
     for array in flat_json["arrays"]:
@@ -63,23 +62,21 @@ def mongoTransformation(y):
     # PRINT UNWIND STAGE
     for item in unwind:
         print(item)
-        
-        
+
     # PROJECTION STAGE
     project.append(f'{{"$project":')
-        
+
     for key in flat_json["out"]:
         # Replace all dots with underscores
         collumn = key.replace(".", "_")
-        
 
         if key in flat_json["nullValues"]:
             # Empty object possible
-            project.append(f'"{collumn}": {{ "$cond": {{"$if": {{"{key}", object],""}}, {{ "$ifNull": [ "${key}", "" ] }}}}}},')
+            project.append(
+                f'"{collumn}": {{ "$cond": {{"$if": {{"{key}", object],""}}, {{ "$ifNull": [ "${key}", "" ] }}}}}},'
+            )
         #  { $cond: { if: <boolean-expression>, then: <true-case>, else: <false-case> } }
-         
-         
- 
+
         project.append(f'"{collumn}": {{ "$ifNull": [ "${key}", "" ] }},')
 
     project.append(f"}}")
@@ -87,8 +84,5 @@ def mongoTransformation(y):
     # PRINT PROJECTION STAGE
     for item in project:
         print(item)
-    
-    return {"unwind": unwind,
-            "project": project}
-    
 
+    return {"unwind": unwind, "project": project}
