@@ -64,7 +64,7 @@ def mongoTransformation(y):
         print(item)
 
     # PROJECTION STAGE
-    project.append(f'{{"$project":')
+    project.append(f'{{"$project":{{')
 
     for key in flat_json["out"]:
         # Replace all dots with underscores
@@ -73,13 +73,13 @@ def mongoTransformation(y):
         if key in flat_json["nullValues"]:
             # Empty object possible
             project.append(
-                f'"{collumn}": {{ "$cond": {{"$if": {{"{key}", object],""}}, {{ "$ifNull": [ "${key}", "" ] }}}}}},'
+                f'"{collumn}": {{ "$cond": {{"$if": {{  "$eq": [ "{key}", "object"]}}, "then": "", "else": {{ "$ifNull": [ "${key}", "" ] }}}}}},'
             )
         #  { $cond: { if: <boolean-expression>, then: <true-case>, else: <false-case> } }
 
         project.append(f'"{collumn}": {{ "$ifNull": [ "${key}", "" ] }},')
 
-    project.append(f"}}")
+    project.append(f"}}}}")
 
     # PRINT PROJECTION STAGE
     for item in project:
