@@ -2,6 +2,7 @@ def flatten_json(y):
     # src */
     # https://www.geeksforgeeks.org/flattening-json-objects-in-python/ */
     arrays = []
+    nullValues = []
     name=""
     out = {}
 
@@ -13,6 +14,10 @@ def flatten_json(y):
         # If the Nested key-value
         # pair is of dict type
         if type(x) is dict:
+            # CHECK FOR EMPTY DICTIONARY
+            if len(x) == 0:
+                nullValues.append(name)
+                print(f"EPMTY DICT: {name}")
             for a in x:            
                 flatten(x[a], arrays, name + a + ".")
                 
@@ -25,11 +30,7 @@ def flatten_json(y):
                 i += 1
                 if name[:-1] not in arrays:
                     arrays.append(name[:-1])
-                # print(name)
-            # print(x)
 
-            
-            print("++")
                 
         else:
             out[name[:-1]] = x
@@ -44,7 +45,8 @@ def flatten_json(y):
         print(array)
     print("===---===---===---===---===---===---===\n")
     return {"out": out,
-            "arrays": arrays}
+            "arrays": arrays,
+            "nullValues": nullValues}
     
     
 def mongoTransformation(y):

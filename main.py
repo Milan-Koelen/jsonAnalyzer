@@ -44,9 +44,7 @@ def fields():
     flat_data = optimus.flatten_json(data)["out"]
     # get all fields witout duplicates
     fields = list(set(flat_data.keys()))
-    lists = []
     arrays = optimus.flatten_json(data)["arrays"]
-    
     print("==")
     print("fields")
     for field in fields:
@@ -96,6 +94,7 @@ def unwind():
     # print(request_data)
     flat_data = optimus.flatten_json(request_data)   
     
+    # UNWIND
     unwind=optimus.mongoTransformation(request_data)['unwind']
     print("--UNDIND--")
     for i in flat_data['arrays']:
@@ -105,9 +104,6 @@ def unwind():
     project=optimus.project(flat_data["out"])["project"]
     return jsonify({"unwind": unwind,
                    "project": project})
-
-
-
 
 
 if __name__ == "__main__":
