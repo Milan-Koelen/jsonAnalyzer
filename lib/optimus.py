@@ -73,7 +73,7 @@ def mongoTransformation(y):
         if key in flat_json["nullValues"]:
             # Empty object possible
             project.append(
-                f'"{collumn}": {{ "$cond": {{"$if": {{"{key}", "object",""}}, {{ "$ifNull": [ "${key}", "" ] }}}}}},'
+                f'"{collumn}": {{ "$cond": {{"$if": {{  "$eq": [ "{key}", "object"]}}, "then": "", "else": {{ "$ifNull": [ "${key}", "" ] }}}}}},'
             )
         #  { $cond: { if: <boolean-expression>, then: <true-case>, else: <false-case> } }
 
