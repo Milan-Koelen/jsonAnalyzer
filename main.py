@@ -50,8 +50,7 @@ def fields():
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    return jsonify({"fields": fields,
-                    "arrays": arrays})
+    return jsonify({"fields": fields, "arrays": arrays})
 
 
 # endpoint to find depth of json
@@ -84,7 +83,14 @@ def req():
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    return jsonify({"request": request_data, "fields": fields, "arrays": arrays,  "response": response})
+    return jsonify(
+        {
+            "request": request_data,
+            "fields": fields,
+            "arrays": arrays,
+            "response": response,
+        }
+    )
 
 
 # endpoint to undwind json
@@ -92,18 +98,27 @@ def req():
 def unwind():
     request_data = request.get_json()
     # print(request_data)
-    flat_data = optimus.flatten_json(request_data)   
-    
+    flat_data = optimus.flatten_json(request_data)
+
     # UNWIND
-    unwind=optimus.mongoTransformation(request_data)['unwind']
-    print("--UNDIND--")
-    for i in flat_data['arrays']:
-        print(i)
-    
+    unwind = optimus.mongoTransformation(request_data)["unwind"]
+    print("--UNWIND--")
+    for array in flat_data["arrays"]:
+        print(array)
+
     # PROJECTION
-    project=optimus.project(flat_data["out"])["project"]
-    return jsonify({"unwind": unwind,
-                   "project": project})
+    project = optimus.project(flat_data["out"])["project"]
+    return jsonify({"unwind": unwind, "project": project})
+
+
+# Transform endpoint
+@app.route("/transform", methods=["POST"])
+def transform():
+    print("Transform request received")
+    request_data = request.get_json()
+    transformation = optimus.mongoTransformation(request_data)
+    
+    return jsonify(transformation)
 
 
 if __name__ == "__main__":

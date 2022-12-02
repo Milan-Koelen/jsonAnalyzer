@@ -3,12 +3,12 @@ def flatten_json(y):
     # https://www.geeksforgeeks.org/flattening-json-objects-in-python/ */
     arrays = []
     nullValues = []
-    name=""
+    name = ""
     out = {}
 
     def flatten(
         x,
-        arrays:set,
+        arrays: set,
         name,
     ):
         # If the Nested key-value
@@ -16,11 +16,10 @@ def flatten_json(y):
         if type(x) is dict:
             # CHECK FOR EMPTY DICTIONARY
             if len(x) == 0:
-                nullValues.append(name)
-                print(f"EPMTY DICT: {name}")
-            for a in x:            
+                nullValues.append(name[:-1])
+            for a in x:
                 flatten(x[a], arrays, name + a + ".")
-                
+
         # If the Nested key-value
         # pair is of list type
         elif type(x) is list:
@@ -31,58 +30,65 @@ def flatten_json(y):
                 if name[:-1] not in arrays:
                     arrays.append(name[:-1])
 
-                
         else:
             out[name[:-1]] = x
 
-    flatten(
-        y,
-        arrays,
-        name
-    )
+    flatten(y, arrays, name)
     print("===---===--- ARRAYS ===---===---===")
     for array in arrays:
         print(array)
     print("===---===---===---===---===---===---===\n")
-    return {"out": out,
-            "arrays": arrays,
-            "nullValues": nullValues}
     
-    
+    print("===---===   NULL  VALUES  ---===---===")
+    for field in nullValues:
+        print(field)
+    print("===---===---===---===---===---===---===\n")
+    return {"out": out, "arrays": arrays, "nullValues": nullValues}
+
+
 def mongoTransformation(y):
 
     unwind = []
-
-    for array in flatten_json(y)['arrays']:
-        unwind.append(f'{{"$unwind": {{"path": "${array}", "preserveNullAndEmptyArrays": "True"}}}},')
-        
+    project = []
     
+    flat_json = flatten_json(y)
+
+
+    # UNWIND STAGE
+    for array in flat_json["arrays"]:
+        unwind.append(
+            f'{{"$unwind": {{"path": "${array}", "preserveNullAndEmptyArrays": "True"}}}},'
+        )
+
+    # PRINT UNWIND STAGE
     for item in unwind:
         print(item)
-
-
-
-    return {"unwind": unwind}
-
-
-def project(y):
-    project = []
+        
+        
+    # PROJECTION STAGE
     project.append(f'{{"$project":')
-    
-    for key in y:
-
+        
+    for key in flat_json["out"]:
         # Replace all dots with underscores
         collumn = key.replace(".", "_")
         
+
+        if key in flat_json["nullValues"]:
+            # Empty object possible
+            project.append(f'"{collumn}": {{ "$cond": {{"$if": {{"{key}", object],""}}, {{ "$ifNull": [ "${key}", "" ] }}}}}},')
+        #  { $cond: { if: <boolean-expression>, then: <true-case>, else: <false-case> } }
+         
+         
+ 
         project.append(f'"{collumn}": {{ "$ifNull": [ "${key}", "" ] }},')
-    
-    
-    
-    # PROJECT ALL FIELDS WITH IFNULL AND COND FOR EPTY STATEMENTS
-    
-    
-    project.append(f'}}')
+
+    project.append(f"}}")
+
+    # PRINT PROJECTION STAGE
     for item in project:
         print(item)
+    
+    return {"unwind": unwind,
+            "project": project}
+    
 
-    return{"project": project}
