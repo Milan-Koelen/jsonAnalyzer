@@ -11,6 +11,7 @@ limiter = Limiter(
 
 # TESTROUTES
 @app.route("/")
+@limiter.limit("1 per second")
 # Hello World
 def hello_world():
     print("hello world")
