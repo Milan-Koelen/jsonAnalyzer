@@ -53,6 +53,21 @@ Provide raw json and returns all fields and arrays found.
 | `fields ` | `array ` | List of fields found in the provided JSON (in dotnotation and deduplicated)|
 
 
+
+#### Returns flat json object
+
+```http
+  POST /flatten
+```
+Returns flatten json object from first object in array.
+
+#### Response
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `JSON ` | `object ` | 1 level deep JSON object with all nested fields on top level (dotnotation and deduplicated)|
+
+
+
 ## Tech Stack
 
 
