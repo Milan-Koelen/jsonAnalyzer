@@ -6,23 +6,23 @@ from lib import optimus, req_factory
 
 app = Flask(__name__)
 limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["60 per hour", "15 per minute"])
+    app, key_func=get_remote_address, default_limits=["60 per hour", "15 per minute"]
+)
 
 # TESTROUTES
 @app.route("/")
 # Hello World
 def hello_world():
     print("hello world")
-    
     return jsonify({"message": "Hello World"})
+
 
 # PING
 @app.route("/ping")
 @limiter.limit("1 per second")
 def ping():
     return jsonify("pong")
+
 
 # endpoint to flatten json
 @app.route("/flatten", methods=["POST"])
@@ -36,7 +36,7 @@ def flatten():
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    
+
     return jsonify(flat_data)
 
 
@@ -55,7 +55,7 @@ def fields():
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    
+
     return jsonify({"fields": fields, "arrays": arrays})
 
 
@@ -89,7 +89,7 @@ def req():
     for field in fields:
         print(field)
     print("===---===---===---===---===---===---===\n")
-    
+
     return jsonify(
         {
             "request": request_data,
@@ -99,16 +99,14 @@ def req():
         }
     )
 
+
 # Transform endpoint
 @app.route("/transform", methods=["POST"])
-
-
-
 def transform():
     print("Transform request received")
     request_data = request.get_json()
     transformation = optimus.mongoTransformation(request_data)
-    
+
     return jsonify(transformation)
 
 
