@@ -6,7 +6,7 @@ from lib import optimus, req_factory
 
 app = Flask(__name__)
 limiter = Limiter(
-    app, key_func=get_remote_address, default_limits=["60 per hour", "15 per minute"]
+    app, key_func=get_remote_address, default_limits=["30 per hour", "15 per minute"]
 )
 
 # TESTROUTES
