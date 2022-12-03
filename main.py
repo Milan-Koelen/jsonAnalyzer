@@ -1,15 +1,28 @@
 from flask import Flask, jsonify, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from lib import optimus, req_factory
 
 app = Flask(__name__)
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["60 per hour", "15 per minute"])
 
+# TESTROUTES
 @app.route("/")
 # Hello World
 def hello_world():
     print("hello world")
     
     return jsonify({"message": "Hello World"})
+
+# PING
+@app.route("/ping")
+@limiter.limit("1 per second")
+def ping():
+    return jsonify("pong")
 
 # endpoint to flatten json
 @app.route("/flatten", methods=["POST"])
@@ -88,6 +101,9 @@ def req():
 
 # Transform endpoint
 @app.route("/transform", methods=["POST"])
+
+
+
 def transform():
     print("Transform request received")
     request_data = request.get_json()
