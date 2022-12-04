@@ -30,21 +30,14 @@ def ping():
 def flatten():
     print("Flatten request received")
     data = request.get_json()
-    # flatten json
-    flat_data = optimus.flatten_json(data)["out"]
-    fields = list(set(flat_data.keys()))
-    print("==")
-    for field in fields:
-        print(field)
-    print("===---===---===---===---===---===---===\n")
 
-    return jsonify(flat_data)
+    return jsonify(optimus.flatten_json(data)["out"])
 
 
 # endpoint to find all fields in json
 @app.route("/fields", methods=["POST"])
 def fields():
-    print("Fields request received")
+    print(f"Fields request received  {get_remote_address()}")
     data = request.get_json()
     # flatten json
     fields = list(set(optimus.flatten_json(data)["out"].keys()))
@@ -63,45 +56,36 @@ def fields():
 #     # get all fields witout duplicates
 #     return jsonify({"depth": depth})
 
-
 # endpoint to make request
 @app.route("/req", methods=["POST"])
 @limiter.limit("10 per hour")
 def req():
-    print("Request request received")
-    # convert json data to dict
+    print(f"Request request received  {get_remote_address()}")
     request_data = request.get_json()
     # make request
     response = req_factory.makeRequest(
         request_data["url"], request_data["data"], request_data["method"]
     )
-    # get all fields witout duplicates
-    flat_data = optimus.flatten_json(response)["out"]
-    arrays = optimus.flatten_json(response)["arrays"]
-    # get all fields witout duplicates
-    fields = list(set(flat_data.keys()))
-    print("=fields=")
-    for field in fields:
-        print(field)
-    print("===---===---===---===---===---===---===\n")
+    flat_data = optimus.flatten_json(response)
 
     return jsonify(
         {
             "request": request_data,
-            "fields": fields,
-            "arrays": arrays,
+            "fields": list(flat_data["out"]),
+            "arrays": flat_data["arrays"],
             "response": response,
         }
     )
 
+
 # Transform endpoint
 @app.route("/transform", methods=["POST"])
 def transform():
-    print("Transform request received")
+    print(f"Transform request received {get_remote_address()}")
     request_data = request.get_json()
-    transformation = optimus.mongoTransformation(request_data)
 
-    return jsonify(transformation)
+    return jsonify(optimus.mongoTransformation(request_data))
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
