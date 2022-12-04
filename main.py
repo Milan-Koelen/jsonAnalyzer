@@ -47,15 +47,8 @@ def fields():
     print("Fields request received")
     data = request.get_json()
     # flatten json
-    flat_data = optimus.flatten_json(data)["out"]
-    # get all fields witout duplicates
-    fields = list(set(flat_data.keys()))
+    fields = list(set(optimus.flatten_json(data)["out"].keys()))
     arrays = optimus.flatten_json(data)["arrays"]
-    print("==")
-    print("fields")
-    for field in fields:
-        print(field)
-    print("===---===---===---===---===---===---===\n")
 
     return jsonify({"fields": fields, "arrays": arrays})
 
@@ -73,6 +66,7 @@ def fields():
 
 # endpoint to make request
 @app.route("/req", methods=["POST"])
+@limiter.limit("10 per hour")
 def req():
     print("Request request received")
     # convert json data to dict
@@ -100,7 +94,6 @@ def req():
         }
     )
 
-
 # Transform endpoint
 @app.route("/transform", methods=["POST"])
 def transform():
@@ -109,7 +102,6 @@ def transform():
     transformation = optimus.mongoTransformation(request_data)
 
     return jsonify(transformation)
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

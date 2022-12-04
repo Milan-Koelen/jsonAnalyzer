@@ -34,9 +34,14 @@ def flatten_json(y):
             out[name[:-1]] = x
 
     flatten(y, arrays, name)
-    print("===---===--- ARRAYS ===---===---===")
+    print("===---===---   ARRAYS  ===---===---===")
     for array in arrays:
         print(array)
+    print("===---===---===---===---===---===---===\n")
+    
+    print("===---===---   FIELDS   ===---===---===")
+    for item in out:
+        print(item)
     print("===---===---===---===---===---===---===\n")
 
     print("===---===   NULL  VALUES  ---===---===")
@@ -59,10 +64,6 @@ def mongoTransformation(y):
             f'{{"$unwind": {{"path": "${array}", "preserveNullAndEmptyArrays": "True"}}}},'
         )
 
-    # PRINT UNWIND STAGE
-    for item in unwind:
-        print(item)
-
     # PROJECTION STAGE
     project.append(f'{{"$project":{{')
 
@@ -82,7 +83,7 @@ def mongoTransformation(y):
     project.append(f"}}}}")
 
     # PRINT PROJECTION STAGE
-    for item in project:
-        print(item)
+    # for item in project:
+    #     print(item)
 
     return {"unwind": unwind, "project": project}
