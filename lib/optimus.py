@@ -1,5 +1,4 @@
-def flatten_json(y):
-    # src */
+def flatten_json(json):
     # https://www.geeksforgeeks.org/flattening-json-objects-in-python/ */
     arrays = []
     nullValues = []
@@ -33,12 +32,12 @@ def flatten_json(y):
         else:
             out[name[:-1]] = x
 
-    flatten(y, arrays, name)
+    flatten(json, arrays, name)
     print("===---===---   ARRAYS  ===---===---===")
     for array in arrays:
         print(array)
     print("===---===---===---===---===---===---===\n")
-    
+
     print("===---===---   FIELDS   ===---===---===")
     for item in out:
         print(item)
@@ -48,15 +47,15 @@ def flatten_json(y):
     for field in nullValues:
         print(field)
     print("===---===---===---===---===---===---===\n")
+
     return {"out": out, "arrays": arrays, "nullValues": nullValues}
 
 
-def mongoTransformation(y):
-
+def mongoTransformation(json):
     unwind = []
     project = []
 
-    flat_json = flatten_json(y)
+    flat_json = flatten_json(json)
 
     # UNWIND STAGE
     for array in flat_json["arrays"]:
@@ -71,19 +70,31 @@ def mongoTransformation(y):
         # Replace all dots with underscores
         collumn = key.replace(".", "_")
 
+        # get data type for transformation
+        data_type = type(flat_json["out"][key]).__name__
+        if data_type == "str":
+            ifNull = f'{{"$ifNull": ["${key}", ""]}}'
+
+        if data_type == "int":
+            ifNull = f'{{"$ifNull": ["${key}", 0]}}'
+
+        if data_type == "float":
+            ifNull = f'{{"$ifNull": ["${key}", 0.0]}}'
+
+        if data_type == "bool":
+            ifNull = f'{{"$ifNull": ["${key}", false]}}'
+
+        # Cond statement for emtpy object null values
         if key in flat_json["nullValues"]:
             # Empty object possible
             project.append(
-                f'"{collumn}": {{ "$cond": {{"$if": {{  "$eq": [ "{key}", "object"]}}, "then": "", "else": {{ "$ifNull": [ "${key}", "" ] }}}}}},'
+                f'"{collumn}": {{ "$cond": {{"$if": {{  "$eq": [ "{key}", "object"]}}, "then": "", "else": {ifNull}}}}},'
             )
-        #  { $cond: { if: <boolean-expression>, then: <true-case>, else: <false-case> } }
 
-        project.append(f'"{collumn}": {{ "$ifNull": [ "${key}", "" ] }},')
+        # Normal project statement
+        else:
+            project.append(f'"{collumn}": {ifNull},')
 
     project.append(f"}}}}")
-
-    # PRINT PROJECTION STAGE
-    # for item in project:
-    #     print(item)
 
     return {"unwind": unwind, "project": project}
