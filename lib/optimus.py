@@ -18,7 +18,6 @@ def flatten_json(json):
                 nullValues.append(name[:-1])
             for a in x:
                 flatten(x[a], arrays, name + a + ".")
-
         # If the Nested key-value
         # pair is of list type
         elif type(x) is list:
@@ -28,7 +27,6 @@ def flatten_json(json):
                 i += 1
                 if name[:-1] not in arrays:
                     arrays.append(name[:-1])
-
         else:
             out[name[:-1]] = x
 
@@ -37,12 +35,10 @@ def flatten_json(json):
     for array in arrays:
         print(array)
     print("===---===---===---===---===---===---===\n")
-
     print("===---===---   FIELDS   ===---===---===")
     for item in out:
         print(item)
     print("===---===---===---===---===---===---===\n")
-
     print("===---===   NULL  VALUES  ---===---===")
     for field in nullValues:
         print(field)
@@ -54,7 +50,6 @@ def flatten_json(json):
 def mongoTransformation(json):
     unwind = []
     project = []
-
     flat_json = flatten_json(json)
 
     # UNWIND STAGE
@@ -67,33 +62,30 @@ def mongoTransformation(json):
     project.append(f'{{"$project":{{')
 
     for key in flat_json["out"]:
-        # Replace all dots with underscores
+
         collumn = key.replace(".", "_")
 
-        # get data type for transformation
         data_type = type(flat_json["out"][key]).__name__
         if data_type == "str":
-            ifNull = f'{{"$ifNull": ["${key}", ""]}}'
-
+            null = '""'
         if data_type == "int":
-            ifNull = f'{{"$ifNull": ["${key}", 0]}}'
-
+            null = 0
         if data_type == "float":
-            ifNull = f'{{"$ifNull": ["${key}", 0.0]}}'
-
+            null = 0.0
         if data_type == "bool":
-            ifNull = f'{{"$ifNull": ["${key}", false]}}'
+            null = "false"
+
+        ifNull = f'{{"$ifNull": ["${key}", {null}]}}'
+
+        if key not in flat_json["nullValues"]:
+
+            project.append(f'"{collumn}": {ifNull},')
 
         # Cond statement for emtpy object null values
-        if key in flat_json["nullValues"]:
-            # Empty object possible
+        else:
             project.append(
                 f'"{collumn}": {{ "$cond": {{"$if": {{  "$eq": [ "{key}", "object"]}}, "then": "", "else": {ifNull}}}}},'
             )
-
-        # Normal project statement
-        else:
-            project.append(f'"{collumn}": {ifNull},')
 
     project.append(f"}}}}")
 
