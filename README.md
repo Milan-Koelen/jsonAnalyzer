@@ -76,6 +76,22 @@ Returns flatten json object from first object in array.
 | `JSON ` | `object ` | 1 level deep JSON object with all nested fields on top level (dotnotation and deduplicated)|
 
 
+#### Returns mongo transformation
+
+```http
+  POST /transform
+```
+**Expects:**  JSON object or array 
+
+Returns mongo aggregation and transformation pipeline of the provided json
+
+#### Response
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `unwind ` | `array ` | All unwinded fields in array|
+| `project ` | `array ` | entire project stage for every field found|
+
+
 
 ## Tech Stack
 
