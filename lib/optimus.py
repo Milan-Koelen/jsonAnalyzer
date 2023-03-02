@@ -102,12 +102,13 @@ def fieldValues(json, field):
                 # lower_key = key.lower()
                 # print(key)
                 if field in key:
-                    if json[key] not in values:
-                        if json[key] is list:
-                            print(list)
-                            for item in json[key]:
+                    if type(json[key]) is list:
+                        print("list", json[key])
+                        for item in json[key]:
+                            if item not in values:    
                                 values.append(item)
-                        else:
+                    else:
+                        if json[key] not in values:
                             values.append(json[key])
                 else:
                     getValues(json[key])
