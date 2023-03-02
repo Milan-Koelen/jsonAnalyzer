@@ -1,3 +1,6 @@
+from flask import request
+
+
 def flatten_json(json):
     # https://www.geeksforgeeks.org/flattening-json-objects-in-python/ */
     arrays = []
@@ -90,3 +93,30 @@ def mongoTransformation(json):
     project.append(f"}}}}")
 
     return {"unwind": unwind, "project": project}
+
+def fieldValues(json, field):
+    values = []
+    def getValues(json):
+        if type(json) is dict:
+            for key in json:
+                # lower_key = key.lower()
+                # print(key)
+                if field in key:
+                    if json[key] not in values:
+                        if json[key] is list:
+                            print(list)
+                            for item in json[key]:
+                                values.append(item)
+                        else:
+                            values.append(json[key])
+                else:
+                    getValues(json[key])
+                    # getValues(json)
+        elif type(json) is list:
+            for item in json:
+                getValues(item)    
+                            
+    getValues(json)
+    # print("values", values)
+
+    return {"fieldValues": values}

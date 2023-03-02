@@ -87,5 +87,17 @@ def transform():
     return jsonify(optimus.mongoTransformation(request_data))
 
 
+@app.route("/fieldValues", methods=["POST"])
+# get all values of a field
+def fieldValues():
+    print(f"FieldValues request received {get_remote_address()}")
+    request_data = request.get_json()
+    field= request.args.get("field")
+    # get all values in specified field
+    request_data["fieldValues"] = optimus.fieldValues(request_data, field)
+
+    return jsonify(optimus.fieldValues(request_data, field))
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
