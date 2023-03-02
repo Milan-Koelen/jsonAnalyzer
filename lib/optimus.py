@@ -99,11 +99,8 @@ def fieldValues(json, field):
     def getValues(json):
         if type(json) is dict:
             for key in json:
-                # lower_key = key.lower()
-                # print(key)
                 if field in key:
                     if type(json[key]) is list:
-                        print("list", json[key])
                         for item in json[key]:
                             if item not in values:    
                                 values.append(item)
@@ -112,7 +109,6 @@ def fieldValues(json, field):
                             values.append(json[key])
                 else:
                     getValues(json[key])
-                    # getValues(json)
         elif type(json) is list:
             for item in json:
                 getValues(item)    
