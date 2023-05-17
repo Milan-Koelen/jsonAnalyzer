@@ -9,6 +9,7 @@ limiter = Limiter(
     app, key_func=get_remote_address, default_limits=["30 per hour", "15 per minute"]
 )
 
+
 # TESTROUTES
 @app.route("/")
 @limiter.limit("1 per second")
@@ -56,6 +57,7 @@ def fields():
 #     # get all fields witout duplicates
 #     return jsonify({"depth": depth})
 
+
 # endpoint to make request
 @app.route("/req", methods=["POST"])
 @limiter.limit("10 per hour")
@@ -92,12 +94,20 @@ def transform():
 def fieldValues():
     print(f"FieldValues request received {get_remote_address()}")
     request_data = request.get_json()
-    field= request.args.get("field")
+    field = request.args.get("field")
     # get all values in specified field
     request_data["fieldValues"] = optimus.fieldValues(request_data, field)
 
     return jsonify(optimus.fieldValues(request_data, field))
 
 
+@app.route("/typescript", methods=["POST"])
+def generate_typescript_declarations_route():
+    json_data = request.json
+    typescript_declarations = optimus.generate_typescript_declarations(json_data)
+
+    return typescript_declarations
+
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5050)
